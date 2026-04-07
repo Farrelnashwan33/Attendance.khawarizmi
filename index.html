@@ -1,0 +1,908 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Attendance by Khwarizmi - Sistem Pantau Kehadiran Efektif</title>
+    <meta name="description" content="Tingkatkan efisiensi perusahaan dengan Sistem Attendance by Khwarizmi. Solusi absensi real-time, akurat dengan Face Recognition & GPS. Konsultasi via WhatsApp: 0816-1123-811">
+    <meta name="keywords" content="sistem attendance, aplikasi absensi, software hris, hris indonesia, absensi online, absensi wajah, absensi gps, khwarizmi hris">
+    <meta name="author" content="Khwarizmi">
+    <meta name="robots" content="index, follow">
+    
+    <link rel="icon" type="image/png" href="Folder Foto/logo.foto.png">
+    <link rel="apple-touch-icon" href="Folder Foto/logo.foto.png">
+    <link rel="mask-icon" href="Folder Foto/logo.foto.png" color="#1DA88D">
+    <meta name="theme-color" content="#1DA88D">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Attendance by Khwarizmi - Sistem Absensi Terbaik">
+    <meta property="og:description" content="Solusi manajemen kehadiran modern yang meningkatkan efisiensi dan akurasi kehadiran karyawan Anda. Konsultasi WA: 0816-1123-811">
+    <meta property="og:image" content="Folder Foto/logo.foto.png">
+    <meta property="og:phone_number" content="+628161123811">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Khwarizmi HRIS",
+      "url": "https://hris.khwarizmi.co.id",
+      "logo": "https://hris.khwarizmi.co.id/Folder%20Foto/logo.foto.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+628161123811",
+        "contactType": "customer service"
+      }
+    }
+    </script>
+
+    <style>
+        /* ============ RESET & VARIABLES ============ */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        :root {
+            --primary: #1DA88D;
+            --primary-dark: #15856f;
+            --primary-light: #e8f6f3;
+            --secondary: #1E5A9A;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --bg-body: #f8fafc;
+            --bg-white: #ffffff;
+            --border: #e2e8f0;
+            --wa-color: #25D366;
+            --wa-dark: #1da851;
+            --orange: #f59e0b;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 35px -5px rgba(29, 168, 141, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img { max-width: 100%; height: auto; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ============ LOADING SCREEN ============ */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loader-text {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============ ANIMASI SCROLL ============ */
+        .animate-on-scroll {
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.2, 1);
+        }
+
+        .fade-up { transform: translateY(60px); }
+        .fade-left { transform: translateX(60px); }
+        .fade-right { transform: translateX(-60px); }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translate(0);
+        }
+
+        .delay-100 { transition-delay: 150ms; }
+        .delay-200 { transition-delay: 300ms; }
+        .delay-300 { transition-delay: 450ms; }
+
+        /* ============ NAVBAR ============ */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 40px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .logo-text span { color: var(--primary); }
+        .logo-text small { font-size: 0.7rem; color: var(--text-gray); font-weight: 500; }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-gray);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        .btn-wa {
+            background: var(--wa-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-wa:hover {
+            background: var(--wa-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        /* Class baru untuk gambar logo WA */
+        .wa-icon-img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+
+        /* ============ HERO SECTION ============ */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(180deg, var(--bg-white) 0%, var(--bg-body) 100%);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .hero-text h1 span { color: var(--primary); }
+        
+        .hero-text p {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        .hero-image img {
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            width: 100%;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ============ SPLIT SECTIONS ============ */
+        .section-pad { padding: 5rem 0; }
+        
+        .split-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .section-title span { color: var(--primary); }
+        
+        .section-subtitle {
+            color: var(--text-gray);
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: var(--bg-white);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .feature-icon {
+            background: var(--primary-light);
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .feature-text h4 { font-size: 1rem; margin-bottom: 0.2rem; }
+        .feature-text p { font-size: 0.9rem; color: var(--text-gray); }
+
+        .rounded-img {
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            width: 100%;
+        }
+
+        /* ============ GALERI GRID ============ */
+        .center-heading {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-body { padding: 1.5rem; }
+        .card-body h4 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .card-body p { color: var(--text-gray); font-size: 0.9rem; }
+
+        /* ============ CTA SECTION ============ */
+        .cta-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+            box-shadow: var(--shadow-md);
+            margin: 4rem 0;
+        }
+
+        .cta-banner h2 { font-size: 2.2rem; margin-bottom: 1rem; color: white;}
+        .cta-banner p { opacity: 0.9; margin-bottom: 2rem; font-size: 1.1rem; }
+
+        .btn-orange {
+            background: var(--orange);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-orange:hover { background: #d97706; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
+
+        /* ============ FOOTER ============ */
+        .footer {
+            background: var(--bg-white);
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-link {
+            display: block;
+            color: var(--text-gray);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .footer-link:hover { color: var(--primary); }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        /* ============ MODAL FORM WA ============ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.25, 1, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-gray);
+            background: none;
+            border: none;
+        }
+
+        .modal-header { margin-bottom: 1.5rem; }
+        .modal-header h3 { font-size: 1.5rem; color: var(--text-dark); margin-bottom: 0.5rem; }
+        .modal-header p { color: var(--text-gray); font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .w-100 { width: 100%; justify-content: center; }
+
+        /* ============ RESPONSIVE (PERBAIKAN HP/MOBILE) ============ */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            
+            .hero-grid, .split-section { 
+                grid-template-columns: 1fr; 
+                gap: 2rem; 
+                text-align: center; 
+            }
+            
+            .hero-text h1 { font-size: 2.2rem; }
+            
+            .hero-actions { 
+                justify-content: center; 
+                flex-direction: column; 
+            }
+            
+            .feature-item { 
+                text-align: left; 
+                justify-content: flex-start;
+            }
+            
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-left { justify-content: center; }
+            
+            .footer-bottom { 
+                flex-direction: column; 
+                gap: 1rem; 
+                text-align: center; 
+            }
+            
+            .split-section:nth-child(even) .split-text { order: 2; }
+            .split-section:nth-child(even) .split-img { order: 1; }
+            
+            .btn-cta-primary, .btn-cta-order, .cta-button, .cta-button-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .nav-wa-btn span:last-child {
+                display: none;
+            }
+            .nav-wa-btn {
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen" class="loading-screen">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Attendance by Khwarizmi...</div>
+    </div>
+
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="#" class="logo">
+                <img src="Folder Foto/logo.foto.png" alt="Logo Khwarizmi">
+                <div class="logo-text">
+                    Attendance by <span>Khwarizmi</span><br>
+                    <small>Sistem Pantau Kehadiran Efektif</small>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#masalah">Masalah</a></li>
+                <li><a href="#solusi">Fitur</a></li>
+                <li><a href="#galeri">Galeri</a></li>
+            </ul>
+            <button onclick="openModal()" class="btn-wa">
+                <img src="Folder Foto/logo wa.jpg" alt="WhatsApp" class="wa-icon-img">
+                Konsultasi WA
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-text animate-on-scroll fade-up">
+                    <h1>Pantau Kehadiran Karyawan dengan <span>Lebih Efektif</span></h1>
+                    <p>Sistem attendance terintegrasi yang menghadirkan solusi real-time, akurat, dan transparan untuk manajemen HR perusahaan Anda.</p>
+                    <div class="hero-actions">
+                        <a href="https://hris.khwarizmi.co.id" class="btn-primary" target="_blank">🚀 Pesan Sekarang</a>
+                        <button onclick="openModal()" class="btn-outline">💬 Konsultasi Gratis</button>
+                    </div>
+                </div>
+                <div class="hero-image animate-on-scroll fade-left delay-100">
+                    <img src="Folder Foto/mockup-hris-2.png" alt="Dashboard HRIS Khwarizmi">
+                </div>
+            </div>
+        </section>
+
+        <section id="masalah" class="section-pad bg-white">
+            <div class="container split-section">
+                <div class="split-img animate-on-scroll fade-right">
+                    <img src="Folder Foto/pusing attendance.png" alt="Masalah HRD" class="rounded-img">
+                </div>
+                <div class="split-text animate-on-scroll fade-left delay-100">
+                    <h2 class="section-title">Masih Pusing Urus <span>Absensi Manual?</span></h2>
+                    <p class="section-subtitle">Tinggalkan cara lama yang rentan kecurangan. Atasi masalah ini sekarang:</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">⏰</div>
+                            <div class="feature-text">
+                                <h4>Pencatatan Memakan Waktu</h4>
+                                <p>Rekap data manual tiap bulan sangat tidak efisien.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🕵️</div>
+                            <div class="feature-text">
+                                <h4>Rawan Titip Absen</h4>
+                                <p>Karyawan bisa memanipulasi waktu tanpa verifikasi.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💼</div>
+                            <div class="feature-text">
+                                <h4>Payroll Sering Meleset</h4>
+                                <p>Data absen terpisah dari gaji membuat salah hitung lembur.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solusi" class="section-pad">
+            <div class="container split-section">
+                <div class="split-text animate-on-scroll fade-right">
+                    <h2 class="section-title">Fitur Attendance yang <span>Powerful</span></h2>
+                    <p class="section-subtitle">Otomatisasi seluruh proses kehadiran dengan fitur cerdas Khwarizmi HRIS.</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">📍</div>
+                            <div class="feature-text">
+                                <h4>GPS & Face Recognition</h4>
+                                <p>Validasi kehadiran dengan foto wajah dan lokasi akurat.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <h4>Dashboard Real-Time</h4>
+                                <p>Pantau siapa yang hadir, telat, atau cuti detik ini juga.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">⚙️</div>
+                            <div class="feature-text">
+                                <h4>Integrasi Payroll Langsung</h4>
+                                <p>Data telat dan absen otomatis memotong/menyesuaikan gaji.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="split-img animate-on-scroll fade-left delay-100">
+                    <img src="Folder Foto/analisa data.png" alt="Fitur Aplikasi" class="rounded-img">
+                </div>
+            </div>
+        </section>
+
+        <section id="galeri" class="section-pad bg-white">
+            <div class="container">
+                <div class="center-heading animate-on-scroll fade-up">
+                    <h2 class="section-title">Galeri <span>Aplikasi</span></h2>
+                    <p class="section-subtitle">Intip tampilan sistem modern yang akan digunakan oleh tim Anda.</p>
+                </div>
+                <div class="grid-3">
+                    <div class="card animate-on-scroll fade-up delay-100">
+                        <img src="Folder Foto/Dasboard premium.png" alt="Dashboard Utama">
+                        <div class="card-body">
+                            <h4>Dashboard Eksekutif</h4>
+                            <p>Tampilan monitoring lengkap untuk HRD dan Manajemen.</p>
+                        </div>
+                    </div>
+                    <div class="card animate-on-scroll fade-up delay-200">
+                        <img src="Folder Foto/ilustrasi.png" alt="Tim Terhubung">
+                        <div class="card-body">
+                            <h4>Terhubung Erat</h4>
+                            <p>Aplikasi mobile yang mudah digunakan oleh seluruh staf.</p>
+                        </div>
+                    </div>
+                    <div class="card animate-on-scroll fade-up delay-300">
+                        <img src="Folder Foto/menejemen.png" alt="Pengaturan Shift">
+                        <div class="card-body">
+                            <h4>Manajemen Fleksibel</h4>
+                            <p>Atur shift dan jadwal kerja sekompleks apapun dengan mudah.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container animate-on-scroll fade-up">
+            <div class="cta-banner">
+                <h2>Siap Beralih ke Sistem yang Lebih Baik?</h2>
+                <p>Otomatiskan manajemen HR Anda hari ini dan tingkatkan produktivitas tim hingga 100%.</p>
+                <div class="cta-buttons">
+                    <a href="https://hris.khwarizmi.co.id" target="_blank" class="btn-orange">Pesan Aplikasi Sekarang</a>
+                    <button onclick="openModal()" class="btn-primary" style="background: white; color: var(--primary);">Konsultasi Tim Ahli</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer animate-on-scroll fade-up">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="#" class="logo" style="margin-bottom: 1rem;">
+                        <img src="Folder Foto/logo.foto.png" alt="Logo Khwarizmi">
+                        <div class="logo-text">Attendance by <span>Khwarizmi</span></div>
+                    </a>
+                    <p style="color: var(--text-gray); font-size: 0.9rem; max-width: 300px;">
+                        Solusi manajemen kehadiran modern yang meningkatkan efisiensi dan akurasi absensi karyawan perusahaan Anda di seluruh Indonesia.
+                    </p>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem; font-size: 1rem;">Navigasi</h3>
+                    <a href="#masalah" class="footer-link">Tantangan Absensi</a>
+                    <a href="#solusi" class="footer-link">Fitur Solusi Kami</a>
+                    <a href="#galeri" class="footer-link">Galeri Aplikasi</a>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem; font-size: 1rem;">Hubungi Kami</h3>
+                    <a href="javascript:void(0)" onclick="openModal()" class="footer-link">💬 WhatsApp Admin</a>
+                    <a href="https://hris.khwarizmi.co.id" target="_blank" class="footer-link">🌐 Website Resmi</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Attendance by Khwarizmi. All rights reserved.</p>
+                <p>Platform HRIS Terpercaya Indonesia</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="waModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <h3>Konsultasi Gratis</h3>
+                <p>Silakan isi detail berikut agar tim kami dapat membantu kebutuhan sistem HR Anda.</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Nama Anda *</label>
+                <input type="text" id="waName" placeholder="Contoh: Budi Santoso" required>
+            </div>
+            <div class="form-group">
+                <label>Nama Perusahaan *</label>
+                <input type="text" id="waCompany" placeholder="Contoh: PT Sukses Mandiri" required>
+            </div>
+            <div class="form-group">
+                <label>Nomor WhatsApp *</label>
+                <input type="text" id="waPhone" placeholder="Contoh: 08123456789" required>
+            </div>
+            <div class="form-group">
+                <label>Pesan Singkat</label>
+                <textarea id="waMessage" placeholder="Sebutkan kendala atau jumlah karyawan Anda..."></textarea>
+            </div>
+            
+            <button onclick="sendToWhatsApp()" class="btn-wa w-100" style="justify-content: center; font-size: 1.05rem;">
+                <img src="Folder Foto/logo wa.jpg" alt="WhatsApp" class="wa-icon-img">
+                Kirim via WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 0. Loading Screen Logic
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+            }, 800);
+        });
+
+        // 1. Logika Animasi Scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15 
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 2. Logika Modal WhatsApp
+        const modal = document.getElementById('waModal');
+
+        function openModal() {
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // NOMOR WA BARU DI SINI
+        function sendToWhatsApp() {
+            const name = document.getElementById('waName').value;
+            const company = document.getElementById('waCompany').value;
+            const phone = document.getElementById('waPhone').value;
+            const msg = document.getElementById('waMessage').value;
+
+            if(!name || !company || !phone) {
+                alert("Harap isi Nama, Perusahaan, dan No. WA terlebih dahulu!");
+                return;
+            }
+
+            const textToSend = `Halo, saya tertarik dengan sistem Attendance di HRIS by Khwarizmi.\n\nNama: ${name}\nPerusahaan: ${company}\nNo. WA: ${phone}\nPesan: ${msg}`;
+            const encodedText = encodeURIComponent(textToSend);
+            
+            // NOMOR WA BARU
+            const waURL = `https://wa.me/628161123811?text=${encodedText}`;
+            
+            window.open(waURL, '_blank');
+            closeModal();
+            
+            document.getElementById('waName').value = '';
+            document.getElementById('waCompany').value = '';
+            document.getElementById('waPhone').value = '';
+            document.getElementById('waMessage').value = '';
+        }
+
+        // 3. Smooth Scroll Navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId !== '#') {
+                    e.preventDefault();
+                    document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
